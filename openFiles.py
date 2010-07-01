@@ -1,5 +1,8 @@
 #! /usr/bin/python
 
+
+from invenio.search_engine import perform_request_search
+
 import re
 from urllib import unquote_plus
 
