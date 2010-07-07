@@ -6,39 +6,32 @@ import re
 from urllib import unquote_plus
 
 def printFile(n):
-   f = open(n, 'r')
-   print f
+   log_file = open(n, 'r')
+   print log_file
    
    search = perform_request_search
 
-   p = re.compile('outgoing')
-   pA = re.compile("outgoing/[0-9a-zA-Z\.:\-/]*")
-   count = 0
-   idsFound = 0
-   list = []
+   url_pattern = re.compile("outgoing/[0-9a-zA-Z\.:\-/]*")
+   click_count = 0
+   url_list = []
    urls = {}
 
-   for line in f:
+   for line in log_file:
       line = unquote_plus(line)
-      m = p.search(line)
-      if m:
-         #print 'Match found:', m.group()
-         mA = pA.search(line)
-         if mA:
-            #print "ID:", mA.group(), "\n"
-            idsFound += 1
-            list.append(mA.group())
-            if mA.group() not in urls:
-               urls[mA.group()] = 1
-            else:
-               urls[mA.group()] = urls[mA.group()] + 1
-         count += 1
+      url_match = url_pattern.search(line)
+      if url_match:
+         #print 'Match found:', url_match.group(), "\n"
+         click_count += 1
+         url_list.append(url_match.group())
+         if url_match.group() not in urls:
+            urls[url_match.group()] = 1
+         else:
+            urls[url_match.group()] = urls[url_match.group()] + 1
 
-   print "Total outgoing clicks:", count
-   print "URLs found:", idsFound
-   #for x in list:
+   print "Total outgoing clicks:", click_count
+   #for x in url_list:
    #   print x, list.count(x)
-   print "Total items:", len(urls)
+   print "Total distinct clicks:", len(urls)
 
    urlKeys = urls.iterkeys()
    urlAppearances = urls.itervalues()
@@ -48,21 +41,22 @@ def printFile(n):
      print repr(urlAppearances.next()).rjust(7), urlKeys.next()
 
    a = re.compile("arx/[a-z-]+/(?P<rid>[0-9]{4}\.[0-9]+)")
+   regex = {a: (lambda match: "arxiv:" + match.group('rid'))}
    b = re.compile("arx/(abs|pdf|ps)/(?P<rid>(hep|astro|nucl|gr|quant|cond)-(ph|th|qc|lat|ex|mat)/[0-9]{7})")
+   regex[b] = (lambda match: match.group('rid'))
    c = re.compile("doi/[0-9\.]+/(?P<rid>physrevd)\.(?P<rid2>[0-9]*)\.(?P<rid3>[0-9]*)")
-   #regex = {a: "arxiv:" + result.group('rid')}
-   regex = {a: (lambda match: "arxiv:" + match.group('rid')), b: (lambda match: match.group('rid'))}
    regex[c] = (lambda match: match.group('rid') + " " + match.group('rid2') + " " + match.group('rid3'))
+
    rec_ids = {}
 
    tests = {1: (lambda match: "arxiv:" + match.group('rid')), 2: "hello"}
 
    for k in urls:
-      hey = False
+      pattern_found = False
       for pattern in regex:
          result = pattern.search(k)
          if result:
-            hey = True
+            pattern_found = True
             print result.group()
             search_results = perform_request_search(p=regex[pattern](result))
             print search_results
@@ -74,8 +68,8 @@ def printFile(n):
                   rec_ids[search_results[0]] = urls[k]
                else:
                   rec_ids[search_results[0]] += urls[k]
-      if hey == False:
-         print result, k
+      if pattern_found == False:
+         print "No pattern found for:", k, result
 #         if result:
 #            searchResults = perform_request_search(p=regex[pattern])
 #            print searchResults
