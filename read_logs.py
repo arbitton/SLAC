@@ -10,18 +10,20 @@ from urllib import unquote_plus
 #the urls to search and find the associated rec id of the actual paper. the keys of the regex
 #dictionary are the possible regular expressions and the values are how to format them to
 #retrive the appropriate paper when using the function 'perform_request_search'
-a = re.compile("arx/[a-z-]+/(?P<rid>[0-9]{4}\.[0-9]+)")
-b = re.compile("arx/(abs|pdf|ps)/(?P<rid>(hep|astro|nucl|gr|quant|cond)-(ph|th|qc|lat|ex|mat)/[0-9]{7})")
-c = re.compile("doi/[0-9\.]+/(?P<rid>[a-z\.0-9/-]*)")
-regex = {a: (lambda match: "arxiv:" + match.group('rid')), 
-         b: (lambda match: match.group('rid')),
-         c: (lambda match: (((match.group('rid')).replace("/", " ")).replace("-", " ")).replace(".", " ")),
+arxiv_general_pattern = re.compile("arx/[a-z-]+/(?P<rid>[0-9]{4}\.[0-9]+)")
+arxiv_specific_pattern = re.compile("arx/(abs|pdf|ps)/(?P<rid>(hep|astro|nucl|gr|quant|cond)\-(ph|th|qc|lat|ex|mat)/[0-9]{7})")
+doi_pattern = re.compile("doi/[0-9\.]+/(?P<rid>[a-z\.0-9/)(-]*)")
+regex = {arxiv_specific_pattern: (lambda match: '037:' + match.group('rid')),
+         arxiv_general_pattern: (lambda match: '"arxiv:' + match.group('rid') + '"'), 
+         doi_pattern: (lambda match: (((((match.group('rid')).replace("/", " ")).replace("-", " ")).replace(".", " ")).replace(")", " ")).replace("(", " ")),
         }
 
 def dissect_log(n, rec_ids):
 
    for line in log_url_filter(n):
       rec_ids = url_count(line, rec_ids)
+   
+   return rec_ids
 
 def log_url_filter(n):
    log_file = open(n, 'r')
@@ -43,16 +45,17 @@ def url_count(url_line, rec_ids):
 
    for pattern in regex:
       result = pattern.search(url_line)
-      if result:
+      if result and pattern_found == False:
          search_results = perform_request_search(p=regex[pattern](result))
-         if len(search_results) != 1:
-            print "Found search term:", regex[pattern](result)
+         #if len(search_results) != 1:
+            #print "Found search term:", regex[pattern](result)
+            #print len(search_results), search_results
             #regex dictionary needs work
-            if len(search_results) > 100:
-               print "Search results are very long"
-            elif len(search_results) == 0:
-               print "Search returned no results for:"
-         else:
+            #if len(search_results) > 100:
+               #print "Search results are very long"
+            #elif len(search_results) == 0:
+               #print "Search returned no results for:"
+         if len(search_results) == 1:
             pattern_found = True
             if search_results[0] not in rec_ids:
                rec_ids[search_results[0]] = 1
