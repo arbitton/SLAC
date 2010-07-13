@@ -47,14 +47,12 @@ def url_count(url_line, rec_ids):
       result = pattern.search(url_line)
       if result and pattern_found == False:
          search_results = perform_request_search(p=regex[pattern](result))
-         #if len(search_results) != 1:
-            #print "Found search term:", regex[pattern](result)
-            #print len(search_results), search_results
+         if len(search_results) != 1:
+            sys.stderr.write("Found search term: " + regex[pattern](result) + "\n")
+            sys.stderr.write("Number of search results: " + str(len(search_results)) + "\n")
             #regex dictionary needs work
-            #if len(search_results) > 100:
-               #print "Search results are very long"
-            #elif len(search_results) == 0:
-               #print "Search returned no results for:"
+            if len(search_results) < 100 and len(search_results) != 0:
+               sys.stderr.write(str(search_results))
          if len(search_results) == 1:
             pattern_found = True
             if search_results[0] not in rec_ids:
@@ -65,7 +63,6 @@ def url_count(url_line, rec_ids):
    #display the url if no pattern in the regex dictionary matched it
    if pattern_found == False:
       sys.stderr.write("NO MATCH: " + url_line + "\n")
-
    return rec_ids
 
 def print_rec_ids(rec_ids):
