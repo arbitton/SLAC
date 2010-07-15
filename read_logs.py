@@ -12,13 +12,17 @@ from invenio.bibrank_citation_searcher import get_cited_by
 #dictionary are the possible regular expressions and the values are how to format them to
 #retrive the appropriate paper when using the function 'perform_request_search'
 arxiv_general_pattern = re.compile("arx/(mirr/)*[a-z-]+/(?P<rid>[0-9]{4}\.[0-9]+)")
-#arxiv_secondary_general_pattern = re.compile("arx/(mirr/)*[a-z-]+/(?P<rid>[a-z/0-9]+)")
+arxiv_secondary_general_pattern = re.compile("arx/(mirr/)*((abs|pdf|ps)/)*(?P<rid>[a-z/0-9-]+)")
 arxiv_specific_pattern = re.compile("arx/(mirr/)*((abs|pdf|ps)/)*(?P<rid>(hep|astro|nucl|gr|quant|cond)-(ph|th|qc|lat|ex|mat)/[0-9]{7})")
 doi_pattern = re.compile("doi/[0-9\.]+/(?P<rid>[a-z\.0-9/)(-]*)")
+physrevlett_pattern = re.compile("doi/(?P<rid>[0-9.]{7}/(j.physletb|physics|physrevlett|j.astropartphys|j.nuclphysbps).[0-9.]+)")
+doi_general_pattern = re.compile("doi/(?P<rid>[0-9)(/.-]+)")
 regex = {arxiv_specific_pattern: (lambda match: '037:' + match.group('rid')),
-         #arxiv_secondary_general_pattern: (lambda match: match.group('rid')),
+         arxiv_secondary_general_pattern: (lambda match: '037:' + match.group('rid')),
          arxiv_general_pattern: (lambda match: '"arxiv:' + match.group('rid') + '"'), 
          doi_pattern: (lambda match: (((((match.group('rid')).replace("/", " ")).replace("-", " ")).replace(".", " ")).replace(")", " ")).replace("(", " ")),
+         physrevlett_pattern: (lambda match: match.group('rid')), 
+         doi_general_pattern: (lambda match: match.group('rid')),
         }
 
 def dissect_log(n, rec_ids):
