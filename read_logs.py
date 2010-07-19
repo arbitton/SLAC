@@ -2,10 +2,12 @@
 
 from invenio.search_engine import perform_request_search
 from invenio.bibrank_citation_searcher import get_cited_by_count
+from invenio.intbitset import intbitset
 import sys
 import re
 from urllib import unquote_plus
 from invenio.bibrank_citation_searcher import get_cited_by
+from invenio.search_engine import get_fieldvalues
 
 #regex is a dictionary holding all the possible regular expressions that can be taken from
 #the urls to search and find the associated rec id of the actual paper. rhe keys of (the regex
@@ -75,19 +77,19 @@ def url_count(url_line, rec_ids):
 def print_rec_ids(rec_ids):
    """Write something here"""
 
-   complete_paper_list = perform_request_search(p='year:2009->2010')
+   complete_paper_list = intbitset(perform_request_search(p='year:2009->2010'))
 
    print "Rec ID, Clicks, All Citations, Narrowed Citations:"
 
    for key in rec_ids:
-      narrowed_citation_list = []
-      paper_citation_list = get_cited_by(key)
 
-      for paper in paper_citation_list:
-         if paper in complete_paper_list:
-             narrowed_citation_list.append(paper)
+      if get_fieldvalues(key, '269__c') == '2009-02':
 
-      print "%d,%d,%d,%d" % (key, rec_ids[key], get_cited_by_count(key), len(narrowed_citation_list))
+         paper_citation_list = intbitset(get_cited_by(key))
+
+         narrowed_citation_count = len(paper_citation_list & complete_paper_list)
+
+         print "%d %d %d" % (key, rec_ids[key], narrowed_citation_count)
 
 def main(args):
    rec_ids = {}
