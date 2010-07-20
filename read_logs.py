@@ -37,6 +37,7 @@ def log_url_filter(n):
    log_file = open(n, 'r')
    
    url_pattern = re.compile("outgoing/[0-9a-zA-Z\.:\-/]*")
+   print "opening file", n
 
    for line in log_file:
       line = unquote_plus(line)
