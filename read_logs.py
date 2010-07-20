@@ -28,7 +28,6 @@ regex = {arxiv_specific_pattern: (lambda match: '037:' + match.group('rid')),
         }
 
 def dissect_log(n, rec_ids):
-
    for line in log_url_filter(n):
       rec_ids = url_count(line, rec_ids)
    
@@ -46,22 +45,12 @@ def log_url_filter(n):
          yield line
 
 def url_count(url_line, rec_ids):
-  
    pattern_found = False
 
    for pattern in regex:
       result = pattern.search(url_line)
       if result and pattern_found == False:
          search_results = perform_request_search(p=regex[pattern](result))
-         #print search_results
-         #print result.group('rid')
-         #print regex[pattern](result)
-         #if len(search_results) != 1:
-            #sys.stderr.write("Found search term: " + regex[pattern](result) + "\n")
-            #sys.stderr.write("Number of search results: " + str(len(search_results)) + "\n")
-            ##regex dictionary needs work
-            #if len(search_results) < 100 and len(search_results) != 0:
-               #sys.stderr.write(str(search_results))
          if len(search_results) == 1:
             pattern_found = True
             if search_results[0] not in rec_ids:
@@ -75,15 +64,12 @@ def url_count(url_line, rec_ids):
    return rec_ids
 
 def print_rec_ids(rec_ids):
-   """Write something here"""
-
    complete_paper_list = intbitset(perform_request_search(p='year:2009->2010'))
 
-   print "Rec ID, Clicks, All Citations, Narrowed Citations:"
+   print "Rec ID, Clicks, Citations:"
 
    for key in rec_ids:
-
-      if get_fieldvalues(key, '269__c') == '2009-02':
+      if get_fieldvalues(key, '269__c')[0] == '2009-02' or get_fieldvalues(key, '269__c')[0] == '2009-01' or get_fieldvalues(key, '269__c')[0] == '2008-12':
 
          paper_citation_list = intbitset(get_cited_by(key))
 
