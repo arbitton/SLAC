@@ -54,21 +54,22 @@ def url_count(url_line, rec_ids):
          search_results = perform_request_search(p=regex[pattern](result))
          if len(search_results) == 1:
             pattern_found = True
-            rid_fieldvalues = get_fieldvalues(search_results[0], '269__c')
-            if len(rid_fieldvalues) == 1:
-            # print "rid_fieldvalue =", rid_fieldvalue
-               if (rid_fieldvalues[0] == '2009-02') or \
-                  (rid_fieldvalues[0] == '2009-01') or \
-                  (rid_fieldvalues[0] == '2008-12'):
-                  if search_results[0] not in rec_ids:
-                     rec_ids[search_results[0]] = 1
-                  else:
-                     rec_ids[search_results[0]] += 1
+            if fieldvalues_pass(search_results[0], ('2009-02', '2009-01', '2008-12')):
+               if search_results[0] not in rec_ids:
+                  rec_ids[search_results[0]] = 1
+               else:
+                  rec_ids[search_results[0]] += 1
 
    #display the url if no pattern in the regex dictionary matched it
    if pattern_found == False:
       sys.stderr.write("NO MATCH: " + url_line + "\n")
    return rec_ids
+
+def fieldvalues_pass(rid, filter_list):
+   rid_fieldvalues = get_fieldvalues(rid, '269__c')
+   if len(rid_fieldvalues) == 1:
+      return rid_fieldvalues[0] in filter_list
+   return False
 
 def print_rec_ids(rec_ids):
    complete_paper_list = intbitset(perform_request_search(p='year:2009->2010'))
@@ -85,7 +86,6 @@ def print_rec_ids(rec_ids):
 def main(args):
    rec_ids = {}
 
-   print args
    for file in args:
       rec_ids = dissect_log(file, rec_ids)
 
