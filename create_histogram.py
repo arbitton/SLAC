@@ -21,19 +21,45 @@ def read_data(file, overall_dict):
          clicks = int(line_match.group('clicks'))
          cites = int(line_match.group('cites'))
          if clicks not in overall_dict:
-             overall_dict[clicks] = {cites: 1}
+            overall_dict[clicks] = {cites: 1}
          elif cites not in overall_dict[clicks]:
-             overall_dict[clicks][cites] = 1
+            overall_dict[clicks][cites] = 1
          else:
-             overall_dict[clicks][cites] +=1
+            overall_dict[clicks][cites] +=1
 
    return overall_dict
 
 def grid_data(overall_dict):
-   
+   # bin size: 2
+   # i = (i * n) to (i * (n + 1) - 1) 
+   # read dict, placing items in bins
+   # add zeroes?
 
+   grid_dict = overall_dict # GET RID OF ME LATER!
 
-   return overall_dict
+   #grid_dict[0] = {0: 0}
+   #grid_dict[1] = 
+
+   #for clicks in overall_dict:
+   #   for cites in overall_dict[clicks]:
+   #      largest_clicks = clicks/??
+   #      largest_cites = cites/??
+   #      if clicks/?? not in grid_dict:
+   #         grid_dict[clicks/??] = {??: overall_dict[clicks][cites]}
+   #      elif cites/?? not in grid_dict[clicks/??]:
+   #         grid_dict[clicks/??][cites/??] = overall_dict[clicks][cites]
+   #      else:
+   #         grid_dict[clicks/??][cites/??] += overall_dict[clicks][cites]
+
+   # insert the implicit zeroes into the grid
+   for x in range(0, 30):
+      for y in range(0, 30):
+         if (x not in grid_dict):
+            grid_dict[x] = {y: 0}
+         elif y not in grid_dict[x]:
+            grid_dict[x][y] = 0
+
+   return grid_dict
 
 def print_data(overall_dict):
    """Print the data set compiled in read_data."""
@@ -51,10 +77,12 @@ def print_data(overall_dict):
 
 def main(args):
    #overall dict: {clicks: {citations: count}}
-   overall_dict = {1: {0: 0}, 2: {0: 0}}
+   overall_dict = {0: {0: 0}, 1: {0: 0}, 2: {0: 0}}
 
    for file in args:
       overall_dict = read_data(file, overall_dict)
+
+   overall_dict = grid_data(overall_dict)
 
    print_data(overall_dict)
 
