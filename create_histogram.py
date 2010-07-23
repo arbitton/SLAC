@@ -35,25 +35,22 @@ def grid_data(overall_dict):
    # read dict, placing items in bins
    # add zeroes?
 
-   grid_dict = overall_dict # GET RID OF ME LATER!
+   grid_dict = {0: {0: 0}}
 
-   #grid_dict[0] = {0: 0}
-   #grid_dict[1] = 
-
-   #for clicks in overall_dict:
-   #   for cites in overall_dict[clicks]:
-   #      largest_clicks = clicks/??
-   #      largest_cites = cites/??
-   #      if clicks/?? not in grid_dict:
-   #         grid_dict[clicks/??] = {??: overall_dict[clicks][cites]}
-   #      elif cites/?? not in grid_dict[clicks/??]:
-   #         grid_dict[clicks/??][cites/??] = overall_dict[clicks][cites]
-   #      else:
-   #         grid_dict[clicks/??][cites/??] += overall_dict[clicks][cites]
+   for clicks in overall_dict:
+      for cites in overall_dict[clicks]:
+         largest_clicks = clicks/2
+         largest_cites = cites/2
+         if clicks/2 not in grid_dict:
+            grid_dict[clicks/2] = {cites/2: overall_dict[clicks][cites]}
+         elif cites/2 not in grid_dict[clicks/2]:
+            grid_dict[clicks/2][cites/2] = overall_dict[clicks][cites]
+         else:
+            grid_dict[clicks/2][cites/2] += overall_dict[clicks][cites]
 
    # insert the implicit zeroes into the grid
-   for x in range(0, 30):
-      for y in range(0, 30):
+   for x in range(0, largest_clicks):
+      for y in range(0, largest_cites):
          if (x not in grid_dict):
             grid_dict[x] = {y: 0}
          elif y not in grid_dict[x]:
