@@ -42,8 +42,11 @@ def log_url_filter(n):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
          yield line
 =======
+=======
+>>>>>>> f13a585... Creating program to read arXiv logs
 =======
 >>>>>>> f13a585... Creating program to read arXiv logs
 =======
