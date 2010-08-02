@@ -40,8 +40,11 @@ def log_url_filter(n):
       url_match = url_pattern.search(line)
       if url_match:
 <<<<<<< HEAD
+<<<<<<< HEAD
          yield line
 =======
+=======
+>>>>>>> f13a585... Creating program to read arXiv logs
          if url_match.group('ip_add') not in blacklisted_ips:
             yield line
    log_file.close()
