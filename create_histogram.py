@@ -85,7 +85,7 @@ def print_data(overall_dict):
          test += overall_dict[clicks][cites]
 
    #print total of summed frequency (ie total number of papers)
-   print "# Test:", test
+   print "# Total papers:", test
    print "# Total clicks:", total_clicks
 
 def main(args):
