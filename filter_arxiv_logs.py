@@ -50,7 +50,7 @@ def url_count(url_line, rec_ids):
          search_results = perform_request_search(p=regex[pattern](result))
          if len(search_results) == 1:
             pattern_found = True
-            print url_line,
+            print search_results[0], url_line,
 #            if fieldvalues_pass(search_results[0], ('2009-02', '2009-01', '2008-12')):
 #            if search_results[0] not in rec_ids:
 #               rec_ids[search_results[0]] = 1

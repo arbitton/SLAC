@@ -27,7 +27,8 @@ def main(args):
 
       x = len(recids)
 
-      shuffle(cites)
+      for i in range(0, 10):
+         shuffle(cites)
 
       for i in range(0, x):
          print recids[i], clicks[i], cites[i]
