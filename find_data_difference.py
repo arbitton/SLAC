@@ -94,9 +94,15 @@ def main(args):
             x = int(line_match.group('click'))
             y = int(line_match.group('cite'))
 
-            z = fabs(float(line_match.group('count')) - (x_expectedval[x]*y_expectedval[y]*118367))
+            #118367
+            #2865
+            #5773
+            z = int(float(line_match.group('count')) - (x_expectedval[x]*y_expectedval[y]*8469))
 
             print x, y, z
+
+         else:
+            print ""
 
 
 if __name__ == "__main__":

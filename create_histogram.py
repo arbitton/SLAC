@@ -45,8 +45,8 @@ def grid_data(overall_dict):
    largest_cites = 0
 
    for clicks in overall_dict:
+      largest_clicks = clicks
       for cites in overall_dict[clicks]:
-         largest_clicks = clicks
          if cites > largest_cites:
             largest_cites = cites
 #         largest_clicks = (clicks + 1)/2
