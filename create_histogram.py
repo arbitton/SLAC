@@ -23,14 +23,15 @@ def read_data(file, overall_dict):
 #         if 'Review' in get_fieldvalues(rid, '980__%'):
 #            print rid, get_fieldvalues(rid, '980__%')
 #         if get_cited_by_count(rid) > 100:
+            rid = int(line_match.group('rid'))
             clicks = int(line_match.group('clicks'))
             cites = int(line_match.group('cites'))
             if clicks not in overall_dict:
-               overall_dict[clicks] = {cites: 1}
+               overall_dict[clicks] = {cites: [rid]}
             elif cites not in overall_dict[clicks]:
-               overall_dict[clicks][cites] = 1
+               overall_dict[clicks][cites] = [rid]
             else:
-               overall_dict[clicks][cites] +=1
+               overall_dict[clicks][cites].append(rid)
 
    return overall_dict
 
@@ -63,9 +64,9 @@ def grid_data(overall_dict):
    for x in range(0, largest_clicks + 1):
       for y in range(0, largest_cites + 1):
          if (x not in grid_dict):
-            grid_dict[x] = {y: 0}
+            grid_dict[x] = {y: []}
          elif y not in grid_dict[x]:
-            grid_dict[x][y] = 0
+            grid_dict[x][y] = []
 
    return grid_dict
 
@@ -80,9 +81,9 @@ def print_data(overall_dict):
       print " "
       for cites in overall_dict[clicks]:
          #print clicks, cites, frequency
-         print "%d %d %d" % (clicks, cites, overall_dict[clicks][cites])
-         total_clicks += clicks * overall_dict[clicks][cites]
-         test += overall_dict[clicks][cites]
+         print "%d %d %d" % (clicks, cites, len(overall_dict[clicks][cites])), overall_dict[clicks][cites]
+         total_clicks += clicks * len(overall_dict[clicks][cites])
+         test += len(overall_dict[clicks][cites])
 
    #print total of summed frequency (ie total number of papers)
    print "# Total papers:", test
@@ -90,7 +91,7 @@ def print_data(overall_dict):
 
 def main(args):
    #overall dict: {clicks: {citations: count}}
-   overall_dict = {0: {0: 0}, 1: {0: 0}, 2: {0: 0}}
+   overall_dict = {0: {0: []}, 1: {0: []}, 2: {0: []}}
 
    for file in args:
       overall_dict = read_data(file, overall_dict)
